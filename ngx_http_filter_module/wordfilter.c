@@ -14,6 +14,10 @@
 /* The max length of word */
 #define MAXLEN 62
 
+const char *host = "127.0.0.1";
+const int   port = 6379;
+
+/* Hash Table */
 struct hashtable {
 	char k[64];
 	float v;
@@ -80,7 +84,7 @@ inline int lc(int c) {
 
 
 /* The dictionary loader, pull data from redis to word weights */
-void dictloader()
+int dictloader()
 {
 	char **iter, *words[] = {
 		"a", "an", "the", "that", "this", "be", "is", "are", "was", "were",
@@ -97,6 +101,7 @@ void dictloader()
 		0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 		44,	35,	31,	31,	26
 	};
+
 
 	struct hashtable *s;
 	for (iter = words; *iter != NULL; iter++) {
@@ -118,7 +123,7 @@ int main(int argc, char *argv[])
 		}
 		else {
 			/* load the dictionary first */
-			dictloader();
+			if (dictloader()) return 1;
 			/* article handle block */
 			char ch, token[64];
 			int len, total = 0;
